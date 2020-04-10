@@ -1,22 +1,24 @@
 const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-// eslint-disable-next-line no-undef
 module.exports = {
   entry: "./index.js",
   output: {
-    // eslint-disable-next-line no-undef
-    path: path.join(__dirname, "dist"),
-    filename: "bundle.js",
+    path: path.join(__dirname, "/dist"),
+    filename: "index.js",
   },
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
+        use: ["babel-loader"],
       },
     ],
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+    }),
+  ],
 };
