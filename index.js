@@ -1,2 +1,3 @@
-import MagneticHover from "./src/script";
+import MagneticHover from "./src/js/magneticHover";
+import "./src/demo/script";
 export default MagneticHover;

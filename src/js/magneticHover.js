@@ -1,39 +1,29 @@
+import Validator from "./validator";
 /**
  * @class
  */
 export default class MagneticHover {
   /**
-   * @param  {HTMLElement} {element
-   * @param  {number} radius radius around the element on which it is triggered callback
-   * @param  {Function} callback The callback that handles the response.
-   *
-   * @callback
-   * @param {number}  distance
+   * @param {Object} options of arguments
+   * @param  {HTMLElement} options.element
+   * @param  {number} options.radius radius around the element on which it is triggered callback
+   * @callback options.callback The callback that handles the response.
    */
-  constructor({
-    element,
-    radius,
-    callback = (distance) => {
-      console.log(distance);
-    },
-  }) {
-    this._checkArgument(
-      element instanceof HTMLElement ||
-        element instanceof HTMLBodyElement ||
-        element instanceof HTMLBodyElement,
-      "element is not a HTMLElement"
-    );
-    this._checkArgument(typeof radius === "number", "radius must be a number");
-    this._checkArgument(
-      typeof callback === "function",
-      "callback must be a function"
-    );
-    this.element = element;
-    this.radius = radius;
+
+  /**
+   * @function callback of MagneticHover
+   * @param  {number} distance
+   */
+  constructor(options) {
+    this._checkArguments(options);
+    const callback = options.callback || ((distance) => console.log(distance));
+    this.element = options.element;
+    this.radius = options.radius;
     this.cb = callback;
+    this._handleMouseMove = this._handleMouseMove.bind(this);
     this._init();
   }
-  handler = this._handleMouseMove.bind(this);
+
   distance = 0;
   positionVariants = {
     TOP_LEFT: "TOP_LEFT",
@@ -265,35 +255,30 @@ export default class MagneticHover {
 
   /**
    * @method _checkArgument check class arguments
-   * @param  {boolean} check some expression, which return boolean
-   * @param  {string} errorMessage error message
+   * @param  {object} args
+   * @param  {boolean} args.check some expression, which return boolean
+   * @param  {string} eargs.rrorMessage error message
    * @return {null}
    */
-  _checkArgument(check, errorMessage) {
-    if (!check) {
-      throw new Error(errorMessage);
+  _checkArguments(args) {
+    if (!Validator.checkOnElement(args.element)) {
+      Validator.showError("element is not HTMLElement");
+    }
+    if (!Validator.checkOnType(args.radius, "number")) {
+      Validator.showError("radius must be a number");
+    }
+    if (!Validator.checkOnType(args.callback, "function")) {
+      Validator.showError("callback must be a function");
     }
   }
-
+ 
   _init() {
-    window.addEventListener("mousemove", this.handler);
+    window.addEventListener("mousemove", this._handleMouseMove);
   }
   /**
    * @method disable remove event listener from window
    */
   disable() {
-    window.removeEventListener("mousemove", this.handler);
+    window.removeEventListener("mousemove", this._handleMouseMove);
   }
 }
-
-//init
-const elem = document.getElementById("box");
-const distanceBox = document.getElementById("distance");
-new MagneticHover({
-  element: elem,
-  radius: 100,
-  callback: (distance) => {
-    console.log(distance);
-    distanceBox.innerText = distance;
-  },
-});
