@@ -21,21 +21,20 @@ export default class MagneticHover {
     this.radius = options.radius;
     this.cb = callback;
     this._handleMouseMove = this._handleMouseMove.bind(this);
+    this._distance = 0;
+    this._POSITION_VARIANTS = {
+      TOP_LEFT: "TOP_LEFT",
+      TOP: "TOP",
+      TOP_RIGHT: "TOP_RIGHT",
+      RIGHT: "RIGHT",
+      BOTTOM_RIGHT: "BOTTOM_RIGHT",
+      BOTTOM: "BOTTOM",
+      BOTTOM_LEFT: "BOTTOM_LEFT",
+      LEFT: "LEFT",
+      MIDDLE: "MIDDLE",
+    };
     this._init();
   }
-
-  distance = 0;
-  POSITION_VARIANTS = {
-    TOP_LEFT: "TOP_LEFT",
-    TOP: "TOP",
-    TOP_RIGHT: "TOP_RIGHT",
-    RIGHT: "RIGHT",
-    BOTTOM_RIGHT: "BOTTOM_RIGHT",
-    BOTTOM: "BOTTOM",
-    BOTTOM_LEFT: "BOTTOM_LEFT",
-    LEFT: "LEFT",
-    MIDDLE: "MIDDLE",
-  };
 
   /**
    * @return {Object} elementPosition - element coordinates
@@ -141,44 +140,44 @@ export default class MagneticHover {
    */
   _getCursorPosition(x, y) {
     if (x < this._elementPosition.left && y < this._elementPosition.top) {
-      return this.POSITION_VARIANTS.TOP_LEFT;
+      return this._POSITION_VARIANTS.TOP_LEFT;
     }
     if (
       x > this._elementPosition.left &&
       x < this._elementPosition.right &&
       y < this._elementPosition.top
     ) {
-      return this.POSITION_VARIANTS.TOP;
+      return this._POSITION_VARIANTS.TOP;
     }
     if (x > this._elementPosition.right && y < this._elementPosition.top) {
-      return this.POSITION_VARIANTS.TOP_RIGHT;
+      return this._POSITION_VARIANTS.TOP_RIGHT;
     }
     if (
       x > this._elementPosition.right &&
       y > this._elementPosition.top &&
       y < this._elementPosition.bottom
     ) {
-      return this.POSITION_VARIANTS.RIGHT;
+      return this._POSITION_VARIANTS.RIGHT;
     }
     if (x > this._elementPosition.right && y > this._elementPosition.bottom) {
-      return this.POSITION_VARIANTS.BOTTOM_RIGHT;
+      return this._POSITION_VARIANTS.BOTTOM_RIGHT;
     }
     if (
       x > this._elementPosition.left &&
       x < this._elementPosition.right &&
       y > this._elementPosition.bottom
     ) {
-      return this.POSITION_VARIANTS.BOTTOM;
+      return this._POSITION_VARIANTS.BOTTOM;
     }
     if (x < this._elementPosition.left && y > this._elementPosition.bottom) {
-      return this.POSITION_VARIANTS.BOTTOM_LEFT;
+      return this._POSITION_VARIANTS.BOTTOM_LEFT;
     }
     if (
       x < this._elementPosition.left &&
       y > this._elementPosition.top &&
       y < this._elementPosition.bottom
     ) {
-      return this.POSITION_VARIANTS.LEFT;
+      return this._POSITION_VARIANTS.LEFT;
     }
     if (
       x > this._elementPosition.left &&
@@ -186,7 +185,7 @@ export default class MagneticHover {
       y > this._elementPosition.top &&
       y < this._elementPosition.bottom
     ) {
-      return this.POSITION_VARIANTS.MIDDLE;
+      return this._POSITION_VARIANTS.MIDDLE;
     }
   }
 
@@ -207,27 +206,27 @@ export default class MagneticHover {
    * @return {number} distance
    */
   _getResultingDistance(x, y) {
-    let resultingDistance = this.distance;
+    let resultingDistance = this._distance;
     switch (this._getCursorPosition(x, y)) {
-      case this.POSITION_VARIANTS.MIDDLE: {
+      case this._POSITION_VARIANTS.MIDDLE: {
         resultingDistance = 0;
         break;
       }
-      case this.POSITION_VARIANTS.TOP_LEFT: {
+      case this._POSITION_VARIANTS.TOP_LEFT: {
         resultingDistance = this._getDiagonalDistance(
           this._elementPosition.left - x,
           this._elementPosition.top - y
         );
         break;
       }
-      case this.POSITION_VARIANTS.TOP: {
+      case this._POSITION_VARIANTS.TOP: {
         resultingDistance = this._getPercent(
           this.radius,
           this._elementPosition.top - y
         );
         break;
       }
-      case this.POSITION_VARIANTS.TOP_RIGHT: {
+      case this._POSITION_VARIANTS.TOP_RIGHT: {
         resultingDistance = this._getDiagonalDistance(
           this._elementPosition.right - x,
           this._elementPosition.top - y
@@ -235,14 +234,14 @@ export default class MagneticHover {
 
         break;
       }
-      case this.POSITION_VARIANTS.RIGHT: {
+      case this._POSITION_VARIANTS.RIGHT: {
         resultingDistance = this._getPercent(
           this.radius,
           this._elementPosition.right - x
         );
         break;
       }
-      case this.POSITION_VARIANTS.BOTTOM_RIGHT: {
+      case this._POSITION_VARIANTS.BOTTOM_RIGHT: {
         resultingDistance = this._getDiagonalDistance(
           this._elementPosition.right - x,
           this._elementPosition.bottom - y
@@ -250,7 +249,7 @@ export default class MagneticHover {
 
         break;
       }
-      case this.POSITION_VARIANTS.BOTTOM: {
+      case this._POSITION_VARIANTS.BOTTOM: {
         resultingDistance = this._getPercent(
           this.radius,
           this._elementPosition.bottom - y
@@ -258,7 +257,7 @@ export default class MagneticHover {
 
         break;
       }
-      case this.POSITION_VARIANTS.BOTTOM_LEFT: {
+      case this._POSITION_VARIANTS.BOTTOM_LEFT: {
         resultingDistance = this._getDiagonalDistance(
           this._elementPosition.left - x,
           this._elementPosition.bottom - y
@@ -266,7 +265,7 @@ export default class MagneticHover {
 
         break;
       }
-      case this.POSITION_VARIANTS.LEFT: {
+      case this._POSITION_VARIANTS.LEFT: {
         resultingDistance = this._getPercent(
           this.radius,
           this._elementPosition.left - x
@@ -287,8 +286,8 @@ export default class MagneticHover {
    */
   _handleMouseMove({ clientX: x, clientY: y }) {
     if (!this._isWithinRange(x, y)) return;
-    this.distance = this._getResultingDistance(x, y);
-    this.cb(this.distance);
+    this._distance = this._getResultingDistance(x, y);
+    this.cb(this._distance);
   }
 
   /**
@@ -314,7 +313,7 @@ export default class MagneticHover {
     window.addEventListener("mousemove", this._handleMouseMove);
   }
   /**
-   * @method disable remove event listener from window
+   * @method destroy remove event listener from window
    */
   destroy() {
     window.removeEventListener("mousemove", this._handleMouseMove);
