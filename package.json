@@ -1,14 +1,21 @@
 {
-  "name": "hover-element",
+  "name": "magnetic-hover",
   "version": "1.0.0",
-  "description": "",
+  "description": "magneticHover lets you trigger hover effect on the element when the cursor is near it, but not over it yet.",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development --open --hot",
+    "start": "webpack --mode development",
     "build": "webpack --mode production"
   },
-  "keywords": [],
-  "author": "Konstantin Stoianov",
+  "keywords": [
+    "hover",
+    "hover next to the element",
+    "hover near the element",
+    "trigger mouseover",
+    "trigger mouseover next to the element",
+    "trigger mouseover near the element"
+  ],
+  "author": "Halo lab",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -18,7 +25,6 @@
     "babel-loader": "^8.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
-    "html-webpack-plugin": "^4.0.4",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"

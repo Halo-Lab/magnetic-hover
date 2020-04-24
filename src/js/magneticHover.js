@@ -25,7 +25,7 @@ export default class MagneticHover {
   }
 
   distance = 0;
-  positionVariants = {
+  POSITION_VARIANTS = {
     TOP_LEFT: "TOP_LEFT",
     TOP: "TOP",
     TOP_RIGHT: "TOP_RIGHT",
@@ -37,6 +37,13 @@ export default class MagneticHover {
     MIDDLE: "MIDDLE",
   };
 
+  /**
+   * @return {Object} elementPosition - element coordinates
+   * @return {number} elementPosition.top
+   * @return {number} elementPosition.left
+   * @return {number} elementPosition.right
+   * @return {number} elementPosition.bottom
+   */
   get _elementPosition() {
     return {
       top: this.element.offsetTop,
@@ -48,7 +55,11 @@ export default class MagneticHover {
 
   /**
    * @method _mouseMoveRange this getter return object with mouse move range coordinates
-   * @return {object}
+   * @return {Object} rangePosition
+   * @return {number} rangePosition.top
+   * @return {number} rangePosition.left
+   * @return {number} rangePosition.right
+   * @return {number} rangePosition.bottom
    */
   get _mouseMoveRange() {
     const screenWidth = window.innerWidth;
@@ -63,17 +74,22 @@ export default class MagneticHover {
 
     const bottomMouseRangePosition =
       this.element.offsetHeight + this.element.offsetTop + this.radius;
+
+    const top = topMouseRangePosition < 0 ? 0 : topMouseRangePosition;
+    const left = leftMouseRangePosition < 0 ? 0 : leftMouseRangePosition;
+    const right =
+      rightMouseRangePosition > screenWidth
+        ? screenWidth
+        : rightMouseRangePosition;
+    const bottom =
+      bottomMouseRangePosition > screenHeight
+        ? screenHeight
+        : bottomMouseRangePosition;
     return {
-      top: topMouseRangePosition < 0 ? 0 : topMouseRangePosition,
-      left: leftMouseRangePosition < 0 ? 0 : leftMouseRangePosition,
-      right:
-        rightMouseRangePosition > screenWidth
-          ? screenWidth
-          : rightMouseRangePosition,
-      bottom:
-        bottomMouseRangePosition > screenHeight
-          ? screenHeight
-          : bottomMouseRangePosition,
+      top,
+      left,
+      right,
+      bottom,
     };
   }
   /**@method _maxHypotenuse this getter return max length from uttermost point of element to uttermost point mouse move range
@@ -84,12 +100,12 @@ export default class MagneticHover {
   }
 
   /**
-   * @method _checkRange This function check cursor position in element radius range
+   * @method _isWithinRange This function check cursor position in element radius range
    * @param  {number} x cursor position on x axis
    * @param  {number} y cursor position on x axis
    * @return {boolean}
    */
-  _checkRange(x, y) {
+  _isWithinRange(x, y) {
     return (
       x > this._mouseMoveRange.left &&
       x < this._mouseMoveRange.right &&
@@ -97,10 +113,22 @@ export default class MagneticHover {
       y > this._mouseMoveRange.top
     );
   }
+
+  /**
+   * @method _getHypotenuse this function find hypotenuse of equilateral triangle
+   * @param  {number} sideX length of the side
+   * @param  {number} sideY length of the side
+   * @return {number}
+   */
   _getHypotenuse(sideX, sideY) {
     return Math.sqrt(Math.pow(sideX, 2) + Math.pow(sideY, 2));
   }
-
+  /**
+   * @method  _getPercent this function return currentValue value in persent
+   * @param  {} maxValue
+   * @param  {} currentValue
+   * @return {number}
+   */
   _getPercent(maxValue, currentValue) {
     return Math.floor((Math.abs(currentValue) / maxValue) * 100);
   }
@@ -113,44 +141,44 @@ export default class MagneticHover {
    */
   _getCursorPosition(x, y) {
     if (x < this._elementPosition.left && y < this._elementPosition.top) {
-      return this.positionVariants.TOP_LEFT;
+      return this.POSITION_VARIANTS.TOP_LEFT;
     }
     if (
       x > this._elementPosition.left &&
       x < this._elementPosition.right &&
       y < this._elementPosition.top
     ) {
-      return this.positionVariants.TOP;
+      return this.POSITION_VARIANTS.TOP;
     }
     if (x > this._elementPosition.right && y < this._elementPosition.top) {
-      return this.positionVariants.TOP_RIGHT;
+      return this.POSITION_VARIANTS.TOP_RIGHT;
     }
     if (
       x > this._elementPosition.right &&
       y > this._elementPosition.top &&
       y < this._elementPosition.bottom
     ) {
-      return this.positionVariants.RIGHT;
+      return this.POSITION_VARIANTS.RIGHT;
     }
     if (x > this._elementPosition.right && y > this._elementPosition.bottom) {
-      return this.positionVariants.BOTTOM_RIGHT;
+      return this.POSITION_VARIANTS.BOTTOM_RIGHT;
     }
     if (
       x > this._elementPosition.left &&
       x < this._elementPosition.right &&
       y > this._elementPosition.bottom
     ) {
-      return this.positionVariants.BOTTOM;
+      return this.POSITION_VARIANTS.BOTTOM;
     }
     if (x < this._elementPosition.left && y > this._elementPosition.bottom) {
-      return this.positionVariants.BOTTOM_LEFT;
+      return this.POSITION_VARIANTS.BOTTOM_LEFT;
     }
     if (
       x < this._elementPosition.left &&
       y > this._elementPosition.top &&
       y < this._elementPosition.bottom
     ) {
-      return this.positionVariants.LEFT;
+      return this.POSITION_VARIANTS.LEFT;
     }
     if (
       x > this._elementPosition.left &&
@@ -158,9 +186,16 @@ export default class MagneticHover {
       y > this._elementPosition.top &&
       y < this._elementPosition.bottom
     ) {
-      return this.positionVariants.MIDDLE;
+      return this.POSITION_VARIANTS.MIDDLE;
     }
   }
+
+  /**
+   * @method _getDiagonalDistance this function find length from element to cursor and return value in persent
+   * @param  {number} sideX length of the side
+   * @param  {number} sideY length of the side
+   * @return {nubmer}
+   */
   _getDiagonalDistance(sideX, sideY) {
     const hypotenuse = this._getHypotenuse(sideX, sideY);
     return this._getPercent(this._maxHypotenuse, hypotenuse);
@@ -172,64 +207,67 @@ export default class MagneticHover {
    * @return {number} distance
    */
   _getResultingDistance(x, y) {
-    let distance = this.distance;
+    let resultingDistance = this.distance;
     switch (this._getCursorPosition(x, y)) {
-      case this.positionVariants.MIDDLE: {
-        distance = 0;
+      case this.POSITION_VARIANTS.MIDDLE: {
+        resultingDistance = 0;
         break;
       }
-      case this.positionVariants.TOP_LEFT: {
-        distance = this._getDiagonalDistance(
+      case this.POSITION_VARIANTS.TOP_LEFT: {
+        resultingDistance = this._getDiagonalDistance(
           this._elementPosition.left - x,
           this._elementPosition.top - y
         );
         break;
       }
-      case this.positionVariants.TOP: {
-        distance = this._getPercent(this.radius, this._elementPosition.top - y);
+      case this.POSITION_VARIANTS.TOP: {
+        resultingDistance = this._getPercent(
+          this.radius,
+          this._elementPosition.top - y
+        );
         break;
       }
-      case this.positionVariants.TOP_RIGHT: {
-        distance = this._getDiagonalDistance(
+      case this.POSITION_VARIANTS.TOP_RIGHT: {
+        resultingDistance = this._getDiagonalDistance(
           this._elementPosition.right - x,
           this._elementPosition.top - y
         );
 
         break;
       }
-      case this.positionVariants.RIGHT: {
-        distance = this._getPercent(
+      case this.POSITION_VARIANTS.RIGHT: {
+        resultingDistance = this._getPercent(
           this.radius,
           this._elementPosition.right - x
         );
         break;
       }
-      case this.positionVariants.BOTTOM_RIGHT: {
-        distance = this._getDiagonalDistance(
+      case this.POSITION_VARIANTS.BOTTOM_RIGHT: {
+        resultingDistance = this._getDiagonalDistance(
           this._elementPosition.right - x,
           this._elementPosition.bottom - y
         );
 
         break;
       }
-      case this.positionVariants.BOTTOM: {
-        distance = this._getPercent(
+      case this.POSITION_VARIANTS.BOTTOM: {
+        resultingDistance = this._getPercent(
           this.radius,
           this._elementPosition.bottom - y
         );
 
         break;
       }
-      case this.positionVariants.BOTTOM_LEFT: {
-        distance = this._getDiagonalDistance(
+      case this.POSITION_VARIANTS.BOTTOM_LEFT: {
+        resultingDistance = this._getDiagonalDistance(
           this._elementPosition.left - x,
           this._elementPosition.bottom - y
         );
 
         break;
       }
-      case this.positionVariants.LEFT: {
-        distance = this._getPercent(
+      case this.POSITION_VARIANTS.LEFT: {
+        resultingDistance = this._getPercent(
           this.radius,
           this._elementPosition.left - x
         );
@@ -239,7 +277,7 @@ export default class MagneticHover {
       default:
         break;
     }
-    return distance;
+    return resultingDistance;
   }
   /**
    * @method _handleMouseMove event listener
@@ -248,7 +286,7 @@ export default class MagneticHover {
    * @return {null}
    */
   _handleMouseMove({ clientX: x, clientY: y }) {
-    if (!this._checkRange(x, y)) return;
+    if (!this._isWithinRange(x, y)) return;
     this.distance = this._getResultingDistance(x, y);
     this.cb(this.distance);
   }
@@ -271,14 +309,14 @@ export default class MagneticHover {
       Validator.showError("callback must be a function");
     }
   }
- 
+
   _init() {
     window.addEventListener("mousemove", this._handleMouseMove);
   }
   /**
    * @method disable remove event listener from window
    */
-  disable() {
+  destroy() {
     window.removeEventListener("mousemove", this._handleMouseMove);
   }
 }
