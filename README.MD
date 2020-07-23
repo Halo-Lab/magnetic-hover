@@ -4,6 +4,12 @@ magneticHover lets you trigger hover effect on the element when the cursor is ne
 
 <img src="https://1mpkoh2uj7ew36r28p3t8kxt11gl-wpengine.netdna-ssl.com/wp-content/uploads/2018/05/1024px-The_Creation_Michelangelo_Italy_Vatican_-_Creative_Commons_by_gnuckx_3492637506-660x350.jpg" alt="creation of adam picture. hands crop">
 
+## Examples
+https://codesandbox.io/s/elegant-bogdan-eupvp?file=/src/index.js
+https://codesandbox.io/s/competent-kare-tnx6t?file=/src/index.js
+https://codesandbox.io/s/friendly-tdd-pdyw3?file=/src/index.js
+
+
 ## Installation
 ```
 npm install --save magneticHover
