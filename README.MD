@@ -2,7 +2,7 @@
 
 magneticHover lets you trigger hover effect on the element when the cursor is near it, but not over it yet.
 
-<img src="http://api.halo-lab.com/wp-content/uploads/magnetic-rotation.gif" alt="Magnetic hover - rotation" height="60">
+<img src="http://api.halo-lab.com/wp-content/uploads/magnetic-rotation.gif" alt="Magnetic hover - rotation" height="392" width="600">
 
 ## Examples
 https://codesandbox.io/s/elegant-bogdan-eupvp?file=/src/index.js <br />
