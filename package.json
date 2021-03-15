@@ -1,6 +1,6 @@
 {
   "name": "magnetic-hover",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "description": "magneticHover lets you trigger hover effect on the element when the cursor is near it, but not over it yet.",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "html-webpack-plugin": "^4.0.4",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.2"
   },
   "repository": {
     "type": "git",
