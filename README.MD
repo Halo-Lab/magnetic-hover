@@ -12,7 +12,7 @@ https://codesandbox.io/s/friendly-tdd-pdyw3?file=/src/index.js
 
 ## Installation
 ```
-npm install --save magneticHover
+npm install --save magnetic-hover
 ```
 
 ## Usage
