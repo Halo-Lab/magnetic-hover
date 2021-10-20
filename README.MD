@@ -1,3 +1,6 @@
+# Vadym Shpet
+https://drive.google.com/file/d/1MVOEdgth46UviAzXG43SqXu9AtmH1A6x/view?usp=sharing
+
 # magneticHover
 
 magneticHover lets you trigger hover effect on the element when the cursor is near it, but not over it yet.
