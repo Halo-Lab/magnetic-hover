@@ -13,15 +13,19 @@ export default class MagneticHover {
   /**
    * @function callback of MagneticHover
    * @param  {number} distance
+   * @param  {Object} coordinates
    */
   constructor(options) {
     this._checkArguments(options);
-    const callback = options.callback || ((distance) => console.log(distance));
+    const callback = options.callback || ((distance, coordinates) => console.log(distance, coordinates));
     this.element = options.element;
     this.radius = options.radius;
     this.cb = callback;
     this._handleMouseMove = this._handleMouseMove.bind(this);
     this._distance = 0;
+
+    this._coordinates = {};
+
     this._init();
   }
 
@@ -141,25 +145,48 @@ export default class MagneticHover {
   /**
    * @method _handleMouseMove event listener
    * @param  {number} x cursor position on x axis
-   * @param  {number} y cursor position on x axis
+   * @param  {number} y cursor position on y axis
    * @return {null}
    */
   _handleMouseMove({ clientX, clientY }) {
     this.mouseX = clientX;
     this.mouseY = clientY;
+
+    this._coordinates = this._calculatingXY(clientX, clientY, this.element)
+
     if (this._isWithinRange()) {
       this._distance = this._getResultingDistance();
     } else {
       this._distance = 100;
     }
-    this.cb(this._distance);
+    this.cb(this._distance, this._coordinates);
   }
+
+
+  /**
+   * @method _calculatingXY calculate X & Y coordinates from of the cursor relative to the center of the tomato box
+   * @param  {number} clientX cursor position on x axis
+   * @param  {number} clientY cursor position on y axis
+   * @param  {HTMLElement} options.element
+   * @return {Object} coordinateX, coordinateY
+   */
+  _calculatingXY(clientX, clientY, elem) {
+    const {x, y, width, height} = elem.getBoundingClientRect();
+    const rectX = x + width / 2;
+    const rectY = y + height / 2;
+
+    const coordinateX = Math.abs(clientX - rectX);
+    const coordinateY =  Math.round(Math.abs(clientY - rectY));
+
+    return {coordinateX, coordinateY};
+  }
+
 
   /**
    * @method _checkArgument check class arguments
    * @param  {object} args
    * @param  {boolean} args.check some expression, which return boolean
-   * @param  {string} eargs.rrorMessage error message
+   * @param  {string} args.errorMessage error message
    * @return {null}
    */
   _checkArguments(args) {
