@@ -39,12 +39,10 @@ new MagneticHover({
 * radius - how far from the target element callback should be triggered
 * callback - function that's gonna be triggered once cursor is over the range between radius and target element
 
-## Status and contribution
-The project is supported by Halo lab development team, we're not working on it regularly, but trying to invest in it when we have time between clients' project. <br />
-Though, feel free to open issues and you're very welcome to contribute. 
- <br />
-  <br />
-<a href="https://www.halo-lab.com/?utm_source=github-brifinator-3000">
-    <img src="http://api.halo-lab.com/wp-content/uploads/dev_halo.svg" alt="Developed in Halo lab" height="60">
-</a>
+## Word from author
 
+Have fun! ✌️
+
+<a href="https://www.halo-lab.com/?utm_source=github">
+  <img src="https://dgestran.sirv.com/Images/supported-by-halolab.png" alt="Supported by Halo lab" height="60">
+</a>
